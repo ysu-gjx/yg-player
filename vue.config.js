@@ -7,6 +7,9 @@ function resolve (dir) {
 }
 
 module.exports = {
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/yg-player/'
+    : '/',
   devServer: {
     before(app) {
       app.get('/api/getTopBanner', function(req, res) {
