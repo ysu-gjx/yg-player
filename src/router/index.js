@@ -1,33 +1,36 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Recommend from 'components/recommend/recommend'
-import Singer from 'components/singer/singer'
-import Rank from 'components/rank/rank'
-import Search from 'components/search/search'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
-Vue.use(Router)
+import Recommend from '@/views/recommend'
+import Singer from '@/views/singer'
+import TopList from '@/views/top-list'
+import Search from '@/views/search'
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      redirect: '/recommend'
-    },
-    {
-      path: '/recommend',
-      component: Recommend
-    },
-    {
-      path: '/singer',
-      component: Singer
-    },
-    {
-      path: '/rank',
-      component: Rank
-    },
-    {
-      path: '/search',
-      component: Search
-    }
-  ]
+const routes = [
+  {
+    path: '/',
+    redirect: '/recommend'
+  },
+  {
+    path: '/recommend',
+    component: Recommend
+  },
+  {
+    path: '/singer',
+    component: Singer
+  },
+  {
+    path: '/top-list',
+    component: TopList
+  },
+  {
+    path: '/search',
+    component: Search
+  }
+]
+
+const router = createRouter({
+  history: createWebHashHistory(process.env.BASE_URL),
+  routes
 })
+
+export default router

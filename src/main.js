@@ -1,21 +1,9 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
-// import fastclick from 'fastclick'
-import VueLazyLoad from 'vue-lazyload'
-import router from 'src/router'
+import router from './router'
+import store from './store'
 
-import 'common/stylus/index.styl'
+// 引入全局样式文件
+import '@/assets/scss/index.scss'
 
-Vue.config.productionTip = false
-
-Vue.use(VueLazyLoad, {
-  loading: require('common/image/default.png'),
-})
-
-// 解决移动端点击300ms延迟问题
-// fastclick.attach(document.body)
-
-new Vue({
-  render: h => h(App),
-  router
-}).$mount('#app')
+createApp(App).use(store).use(router).mount('#app')
