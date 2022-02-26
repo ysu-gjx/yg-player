@@ -1,6 +1,11 @@
 <template>
-  <Scroll class="index-list" v-loading="!data.length">
-    <ul>
+  <Scroll
+    class="index-list"
+    v-loading="!data.length"
+    :probe-type="3"
+    @scroll="onScroll"
+  >
+    <ul ref="groupRef">
       <li v-for="group in data"
         :key="group.title"
         class="group">
@@ -17,16 +22,29 @@
         </ul>
       </li>
     </ul>
+    <div class="fixed">
+      <div class="fixed-title"></div>
+    </div>
   </Scroll>
 </template>
 <script>
 import Scroll from '@/components/base/scroll/scroll'
+// import { ref } from 'vue'
+import useFixed from './use-fixed'
 export default {
   name: 'index-list',
   props: {
     data: {
       type: Array,
       default: () => []
+    }
+  },
+  setup(props) {
+    const { groupRef, onScroll } = useFixed(props)
+
+    return {
+      groupRef,
+      onScroll
     }
   },
   components: {
