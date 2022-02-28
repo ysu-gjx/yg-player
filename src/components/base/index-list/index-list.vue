@@ -4,6 +4,7 @@
     v-loading="!data.length"
     :probe-type="3"
     @scroll="onScroll"
+    ref="scrollRef"
   >
     <ul ref="groupRef">
       <li v-for="group in data"
@@ -22,15 +23,33 @@
         </ul>
       </li>
     </ul>
-    <div class="fixed">
-      <div class="fixed-title"></div>
+    <div class="fixed" v-show="fixedTitle" :style="fixedStyle">
+      <div class="fixed-title">{{fixedTitle}}</div>
+    </div>
+    <div
+      class="shortcut"
+      @touchstart.stop.prevent="onShortcutTouchStart"
+      @touchmove.stop.prevent="onShortcutTouchMove"
+      @touchend.stop.prevent
+    >
+      <ul>
+        <li
+          v-for="(item, index) in shortcutList"
+          :key="index"
+          class="item"
+          :class="{'current': currentIndex === index}"
+          :data-index="index"
+        >
+          {{item}}
+        </li>
+      </ul>
     </div>
   </Scroll>
 </template>
 <script>
 import Scroll from '@/components/base/scroll/scroll'
-// import { ref } from 'vue'
 import useFixed from './use-fixed'
+import useShortcut from './use-shortcut'
 export default {
   name: 'index-list',
   props: {
@@ -40,11 +59,21 @@ export default {
     }
   },
   setup(props) {
-    const { groupRef, onScroll } = useFixed(props)
+    const { groupRef, onScroll, fixedTitle, fixedStyle, currentIndex } = useFixed(props)
+    const { shortcutList, scrollRef, onShortcutTouchStart, onShortcutTouchMove } = useShortcut(props, groupRef)
 
     return {
+      // fixed
       groupRef,
-      onScroll
+      onScroll,
+      fixedTitle,
+      fixedStyle,
+      currentIndex,
+      // shortcut
+      shortcutList,
+      scrollRef,
+      onShortcutTouchStart,
+      onShortcutTouchMove
     }
   },
   components: {
