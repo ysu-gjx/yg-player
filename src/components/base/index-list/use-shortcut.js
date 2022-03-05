@@ -25,7 +25,7 @@ export default function useShortcut (props, groupRef) {
   }
 
   function scrollTo(index) {
-    if (isNaN(index)) {
+    if (isNaN(index)) { // 在anchor 上下两个黑边区域时
       return
     }
     index = Math.max(0, Math.min(shortcutList.value.length - 1, index)) // 控制手指滑动边界
