@@ -12,6 +12,9 @@ module.exports = {
       }
     }
   },
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/yg-player/'
+    : '/',
   devServer: {
     before(app) {
       registerRouter(app)
