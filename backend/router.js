@@ -312,7 +312,7 @@ function registerSingerDetail(app) {
       comm: { ct: 24, cv: 0 },
       singerSongList: {
         method: 'GetSingerSongList',
-        param: { order: 1, singerMid: req.query.mid, begin: 0, num: 100 },
+        param: { order: 1, singerMid: req.query.mid, begin: 0, num: 10 }, // num: 100
         module: 'musichall.song_list_server'
       }
     })

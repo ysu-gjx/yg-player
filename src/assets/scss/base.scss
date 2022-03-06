@@ -10,3 +10,12 @@ body, html {
 .g-relative {
   position: relative;
 }
+
+.slide-enter-active, .slide-leave-active {
+  // transition: all 10s  加长时间可以看动画过程，便于调试
+  transition: all 0.3s
+}
+
+.slide-enter-from, .slide-leave-to {
+  transform: translate3d(100%, 0, 0)
+}
