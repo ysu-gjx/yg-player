@@ -22,12 +22,13 @@ export default {
       default: () => []
     }
   },
+  emits: ['select'],
   methods: {
     getDesc(song) {
       return `${song.singer}路${song.album}`
     },
     selectItem(song, index) {
-
+      this.$emit('select', { song, index })
     }
   }
 }

@@ -9,12 +9,22 @@
       :style="bgImageStyle"
       ref="bgImage"
     >
+      <div class="play-btn-wrapper" :style="playBtnStyle">
+        <div
+          class="play-btn"
+          v-show="songs.length > 0"
+          @click="random"
+        >
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter" :style="filterStyle"></div>
     </div>
     <scroll
       class="list"
       v-loading="loading"
-      v-no-result="noResult"
+      v-no-result:[noResultText]="noResult"
       :style="listStyle"
       :probe-type="3"
       @scroll="onScroll"
@@ -22,6 +32,7 @@
       <div class="song-list-wrapper">
         <song-list
           :songs="songs"
+          @select="selectItem"
         ></song-list>
       </div>
     </scroll>
@@ -30,6 +41,7 @@
 <script>
 import Scroll from '@/components/base/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
+import { mapActions } from 'vuex'
 
 const RESERVED_HEIGHT = 40
 export default {
@@ -38,7 +50,11 @@ export default {
     songs: Array,
     pic: String,
     title: String,
-    loading: Boolean
+    loading: Boolean,
+    noResultText: {
+      type: String,
+      default: '抱歉，没有找到可播放的歌曲'
+    }
   },
   data () {
     return {
@@ -50,6 +66,15 @@ export default {
   computed: {
     noResult() {
       return !this.loading && this.songs.length === 0
+    },
+    playBtnStyle() {
+      let display = ''
+      if (this.scrollY >= this.maxTranslateY) {
+        display = 'none'
+      }
+      return {
+        display
+      }
     },
     bgImageStyle() {
       const scrollY = this.scrollY
@@ -111,7 +136,20 @@ export default {
     },
     onScroll(pos) {
       this.scrollY = -pos.y
-    }
+    },
+    selectItem({ song, index }) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    random() {
+      this.randomPlay(this.songs)
+    },
+    ...mapActions([
+      'selectPlay',
+      'randomPlay'
+    ])
   },
   components: {
     Scroll,
