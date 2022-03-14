@@ -31,16 +31,23 @@
         </div>
       </div>
       <div class="bottom">
-        <div class="dot-wrapper">
+        <!-- <div class="dot-wrapper">
           <span class="dot" :class="{'active': currentShow === 'cd'}"></span>
           <span class="dot" :class="{'active': currentShow === 'lyric'}"></span>
-        </div>
+        </div> -->
         <div class="progress-wrapper">
-          <span class="time time-l"></span>
+          <span class="time time-l">{{ formatTime(currentTime) }}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar
+              ref="barRef"
+              :progress="progress"
+            ></progress-bar>
+          </div>
+          <span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
         </div>
         <div class="operators">
           <div class="icon i-left">
-            <i @click="changeMode" :class="iconMode"></i>
+            <i @click="changeMode" :class="modeIcon"></i>
           </div>
           <div class="icon i-left" :class="disableCls">
             <i @click="prev" class="icon-prev"></i>
@@ -52,7 +59,7 @@
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-not-favorite"></i>
+            <i @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
           </div>
         </div>
       </div>
@@ -62,6 +69,7 @@
       @pause="pause"
       @canplay="ready"
       @error="error"
+      @timeupdate="updateTime"
     ></audio>
   </div>
 </template>
@@ -69,13 +77,20 @@
 import { useStore } from 'vuex'
 import { computed, watch, ref } from 'vue'
 import useMode from './use-mode'
+import useFavorite from './use-favorite'
+import ProgressBar from './progress-bar.vue'
+import { formatTime } from '@/assets/js/util'
 
 export default {
   name: 'player',
+  components: {
+    ProgressBar
+  },
   setup () {
     // data
     const audioRef = ref(null)
     const songReady = ref(false)
+    const currentTime = ref(0)
 
     // vuex
     const store = useStore()
@@ -86,7 +101,8 @@ export default {
     const playList = computed(() => store.state.playList)
 
     // hooks
-    const { iconMode, changeMode } = useMode()
+    const { modeIcon, changeMode } = useMode()
+    const { getFavoriteIcon, toggleFavorite } = useFavorite()
 
     // computed
     const playIcon = computed(() => {
@@ -95,12 +111,16 @@ export default {
     const disableCls = computed(() => {
       return songReady.value ? '' : 'disable'
     })
+    const progress = computed(() => {
+      return currentTime.value / currentSong.value.duration
+    })
 
     // watch
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
       }
+      currentTime.value = 0 // 切换歌曲，currentTime 置为0
       songReady.value = false
       const audioEl = audioRef.value
       audioEl.src = newSong.url
@@ -192,12 +212,18 @@ export default {
       songReady.value = true
     }
 
+    function updateTime(e) {
+      currentTime.value = e.target.currentTime
+    }
+
     return {
       audioRef,
       fullScreen,
       currentSong,
       playIcon,
       disableCls,
+      currentTime,
+      progress,
       goBack,
       togglePlay,
       pause,
@@ -205,9 +231,14 @@ export default {
       next,
       ready,
       error,
+      updateTime,
+      formatTime,
       // usemode
-      iconMode,
-      changeMode
+      modeIcon,
+      changeMode,
+      // useFavorite
+      getFavoriteIcon,
+      toggleFavorite
     }
   }
 }
